@@ -56,6 +56,9 @@ var ErrServerSelectionTimeout = errors.New("server selection timeout")
 // MonitorMode represents the way in which a server is monitored.
 type MonitorMode uint8
 
+// random is a package-global pseudo-random number source.
+var random = rand.New(rand.NewSource(time.Now().UnixNano()))
+
 // These constants are the available monitoring modes.
 const (
 	AutomaticMode MonitorMode = iota

@@ -22,6 +22,9 @@ import (
 	"go.mongodb.org/mongo-driver/x/mongo/driver/wiremessage"
 )
 
+// random is a package-global pseudo-random number source.
+var random = rand.New(rand.NewSource(time.Now().UnixNano()))
+
 // ParseAndValidate parses the provided URI into a ConnString object.
 // It check that all values are valid.
 func ParseAndValidate(s string) (ConnString, error) {
