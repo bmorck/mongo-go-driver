@@ -56,9 +56,6 @@ var ErrServerSelectionTimeout = errors.New("server selection timeout")
 // MonitorMode represents the way in which a server is monitored.
 type MonitorMode uint8
 
-// random is a package-global pseudo-random number source.
-var random = rand.New(rand.NewSource(time.Now().UnixNano()))
-
 // These constants are the available monitoring modes.
 const (
 	AutomaticMode MonitorMode = iota
@@ -406,7 +403,7 @@ func (t *Topology) SelectServer(ctx context.Context, ss description.ServerSelect
 			continue
 		}
 
-		selected := suitable[random.Intn(len(suitable))]
+		selected := suitable[rand.Intn(len(suitable))]
 		selectedS, err := t.FindServer(selected)
 		switch {
 		case err != nil:
@@ -554,6 +551,22 @@ func (t *Topology) pollSRVRecords() {
 			t.pollHeartbeatTime.Store(false)
 		}
 
+<<<<<<< HEAD
+=======
+		// If t.cfg.srvMaxHosts is non-zero and is less than the number of hosts, randomly
+		// select srvMaxHosts hosts from parsedHosts using the modern Fisher-Yates
+		// algorithm.
+		if t.cfg.srvMaxHosts != 0 && t.cfg.srvMaxHosts < len(parsedHosts) {
+			// TODO(GODRIVER-1876): Use rand#Shuffle after dropping Go 1.9 support.
+			n := len(parsedHosts)
+			for i := 0; i < n-1; i++ {
+				j := i + rand.Intn(n-i)
+				parsedHosts[j], parsedHosts[i] = parsedHosts[i], parsedHosts[j]
+			}
+			parsedHosts = parsedHosts[:t.cfg.srvMaxHosts]
+		}
+
+>>>>>>> parent of 5cab184a (GODRIVER-2223 Use separate, seeded pseudo-random sources for each package. (#803))
 		cont := t.processSRVResults(parsedHosts)
 		if !cont {
 			break
