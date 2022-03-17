@@ -551,8 +551,6 @@ func (t *Topology) pollSRVRecords() {
 			t.pollHeartbeatTime.Store(false)
 		}
 
-<<<<<<< HEAD
-=======
 		// If t.cfg.srvMaxHosts is non-zero and is less than the number of hosts, randomly
 		// select srvMaxHosts hosts from parsedHosts using the modern Fisher-Yates
 		// algorithm.
@@ -566,7 +564,6 @@ func (t *Topology) pollSRVRecords() {
 			parsedHosts = parsedHosts[:t.cfg.srvMaxHosts]
 		}
 
->>>>>>> parent of 5cab184a (GODRIVER-2223 Use separate, seeded pseudo-random sources for each package. (#803))
 		cont := t.processSRVResults(parsedHosts)
 		if !cont {
 			break
