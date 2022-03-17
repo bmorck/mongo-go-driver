@@ -17,14 +17,10 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/internal"
-	"go.mongodb.org/mongo-driver/internal/randutil"
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/dns"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/wiremessage"
 )
-
-// random is a package-global pseudo-random number generator.
-var random = randutil.NewLockedRand(rand.NewSource(time.Now().UnixNano()))
 
 // ParseAndValidate parses the provided URI into a ConnString object.
 // It check that all values are valid.
@@ -309,11 +305,15 @@ func (p *parser) parse(original string) error {
 		}
 
 		// If p.SRVMaxHosts is non-zero and is less than the number of hosts, randomly
-		// select SRVMaxHosts hosts from parsedHosts.
-		if p.SRVMaxHosts > 0 && p.SRVMaxHosts < len(parsedHosts) {
-			random.Shuffle(len(parsedHosts), func(i, j int) {
-				parsedHosts[i], parsedHosts[j] = parsedHosts[j], parsedHosts[i]
-			})
+		// select SRVMaxHosts hosts from parsedHosts using the modern Fisher-Yates
+		// algorithm.
+		if p.SRVMaxHosts != 0 && p.SRVMaxHosts < len(parsedHosts) {
+			// TODO(GODRIVER-1876): Use rand#Shuffle after dropping Go 1.9 support.
+			n := len(parsedHosts)
+			for i := 0; i < n-1; i++ {
+				j := i + rand.Intn(n-i)
+				parsedHosts[j], parsedHosts[i] = parsedHosts[i], parsedHosts[j]
+			}
 			parsedHosts = parsedHosts[:p.SRVMaxHosts]
 		}
 	}
