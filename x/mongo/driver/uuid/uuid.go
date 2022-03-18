@@ -8,6 +8,7 @@ package uuid // import "go.mongodb.org/mongo-driver/x/mongo/driver/uuid"
 
 import (
 	"io"
+	"log"
 	"math/rand"
 	"time"
 
@@ -18,7 +19,8 @@ import (
 type UUID [16]byte
 
 // random is a package-global pseudo-random number generator.
-var random = randutil.NewLockedRand(rand.NewSource(time.Now().UnixNano()))
+var seed = rand.NewSource(time.Now().UnixNano())
+var random = randutil.NewLockedRand(seed)
 
 // New returns a random UUIDv4. It uses a "math/rand" pseudo-random number generator seeded with the
 // package initialization time.
@@ -26,6 +28,9 @@ var random = randutil.NewLockedRand(rand.NewSource(time.Now().UnixNano()))
 // New should not be used to generate cryptographically-secure random UUIDs.
 func New() (UUID, error) {
 	var uuid [16]byte
+
+	logger := log.Default()
+	logger.Println(seed)
 
 	_, err := io.ReadFull(random, uuid[:])
 	if err != nil {
