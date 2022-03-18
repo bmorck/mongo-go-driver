@@ -19,8 +19,8 @@ import (
 type UUID [16]byte
 
 // random is a package-global pseudo-random number generator.
-var seed = rand.NewSource(time.Now().UnixNano())
-var random = randutil.NewLockedRand(seed)
+var seed = time.Now().UnixNano()
+var random = randutil.NewLockedRand(rand.NewSource(seed))
 
 // New returns a random UUIDv4. It uses a "math/rand" pseudo-random number generator seeded with the
 // package initialization time.
