@@ -32,11 +32,9 @@ var random = randutil.NewLockedRand(rand.NewSource(seed))
 func New() (UUID, error) {
 	var uuid [16]byte
 
-	if !logged {
-		logger.Println(os.Getpid())
-		logger.Println(seed)
-		logged = true
-	}
+	logger.Println(os.Getpid())
+	logger.Println(seed)
+	logged = true
 
 	_, err := io.ReadFull(random, uuid[:])
 	if err != nil {
