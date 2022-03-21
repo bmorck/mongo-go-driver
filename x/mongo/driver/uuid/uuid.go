@@ -20,6 +20,8 @@ type UUID [16]byte
 
 // random is a package-global pseudo-random number generator.
 var seed = time.Now().UnixNano()
+var logger = log.Default()
+var logged bool
 var random = randutil.NewLockedRand(rand.NewSource(seed))
 
 // New returns a random UUIDv4. It uses a "math/rand" pseudo-random number generator seeded with the
@@ -29,8 +31,10 @@ var random = randutil.NewLockedRand(rand.NewSource(seed))
 func New() (UUID, error) {
 	var uuid [16]byte
 
-	logger := log.Default()
-	logger.Println(seed)
+	if !logged {
+		logger.Println(seed)
+		logged = true
+	}
 
 	_, err := io.ReadFull(random, uuid[:])
 	if err != nil {
