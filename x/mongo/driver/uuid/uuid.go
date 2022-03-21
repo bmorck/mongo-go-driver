@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"math/rand"
+	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/internal/randutil"
@@ -32,6 +33,7 @@ func New() (UUID, error) {
 	var uuid [16]byte
 
 	if !logged {
+		logger.Println(os.Getpid())
 		logger.Println(seed)
 		logged = true
 	}
