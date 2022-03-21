@@ -7,6 +7,7 @@
 package uuid // import "go.mongodb.org/mongo-driver/x/mongo/driver/uuid"
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"math/rand"
@@ -32,9 +33,9 @@ var random = randutil.NewLockedRand(rand.NewSource(seed))
 func New() (UUID, error) {
 	var uuid [16]byte
 
-	logger.Println("LOGGING SEED")
-	logger.Println(os.Getpid())
-	logger.Println(seed)
+	fmt.Println("LOGGING SEED")
+	fmt.Println(os.Getpid())
+	fmt.Println(seed)
 	logged = true
 
 	_, err := io.ReadFull(random, uuid[:])
