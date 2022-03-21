@@ -25,6 +25,8 @@ var logger = log.Default()
 var logged bool
 var random = randutil.NewLockedRand(rand.NewSource(seed))
 
+const int32max = (1 << 31) - 1
+
 // New returns a random UUIDv4. It uses a "math/rand" pseudo-random number generator seeded with the
 // package initialization time.
 //
@@ -36,6 +38,17 @@ func New() (UUID, error) {
 		logger.Println("LOGGING SEED")
 		logger.Println(os.Getpid())
 		logger.Println(seed)
+
+		seed = seed % int32max
+		if seed < 0 {
+			seed += int32max
+		}
+		if seed == 0 {
+			seed = 89482311
+		}
+
+		x := int32(seed)
+		logger.Println(x)
 		logged = true
 	}
 
