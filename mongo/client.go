@@ -123,8 +123,6 @@ func Connect(ctx context.Context, opts ...*options.ClientOptions) (*Client, erro
 func NewClient(opts ...*options.ClientOptions) (*Client, error) {
 	clientOpt := options.MergeClientOptions(opts...)
 
-	fmt.Println("TEST")
-
 	id, err := uuid.New()
 	if err != nil {
 		return nil, err

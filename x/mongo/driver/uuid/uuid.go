@@ -11,6 +11,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"sync"
 	"time"
 
 	"go.mongodb.org/mongo-driver/internal/randutil"
@@ -27,6 +28,8 @@ var random = randutil.NewLockedRand(rand.NewSource(seed))
 
 const int32max = (1 << 31) - 1
 
+var mu sync.Mutex
+
 // New returns a random UUIDv4. It uses a "math/rand" pseudo-random number generator seeded with the
 // package initialization time.
 //
@@ -34,6 +37,7 @@ const int32max = (1 << 31) - 1
 func New() (UUID, error) {
 	var uuid [16]byte
 
+	mu.Lock()
 	if !logged {
 		logger.Println("LOGGING SEED")
 		logger.Println(os.Getpid())
@@ -51,6 +55,7 @@ func New() (UUID, error) {
 		logger.Println(x)
 		logged = true
 	}
+	mu.Unlock()
 
 	_, err := io.ReadFull(random, uuid[:])
 	if err != nil {
